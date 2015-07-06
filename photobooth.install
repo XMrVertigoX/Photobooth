@@ -1,0 +1,23 @@
+pre_install() {
+	pip install rpi.gpio picamera
+}
+
+post_install() {
+	true
+}
+
+pre_upgrade() {
+	true
+}
+
+post_upgrade() {
+	true
+}
+
+pre_remove() {
+	true
+}
+
+post_remove() {
+	true
+}
