@@ -3,6 +3,7 @@ Description =
  
 [Service]
 WorkingDirectory = /opt/photobooth
+ExecStartPre= 
 ExecStart = photobooth
 Restart = on-failure
 RestartSec = 15

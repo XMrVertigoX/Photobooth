@@ -1,21 +1,25 @@
+#! /bin/python
+
 import configparser, picamera, subprocess, RPi.GPIO as GPIO, time
 
 config = configparser.ConfigParser()
 config.read('photobooth.ini')
 
-imgDir = config['Paths']['imageDirectory']
+imgDir = config['paths']['imageDirectory']
 
 run = False
 
-#camera = picamera.PiCamera()
+lastPhoto = None
+
+camera = picamera.PiCamera()
 
 #dslr_usb=str(os.popen("lsusb -d 04b0:").readlines())[17:][:3]
 
 
 ## ----- Functions -------------------------------------------------------------
 
-def countdown():
-	for x in range(3):
+def countdown(seconds):
+	for x in range(seconds):
 		p = pngview(imgDir + "/" + (x+1) + ".png")
 		time.sleep(1)
 		p.terminate()
@@ -31,7 +35,7 @@ def pngview(imagePath):
 	return p
 
 def makeAPicture():
-	countdown()
+	countdown(3)
 
 def setupGPIO():
 	GPIO.setmode(GPIO.BCM)
@@ -41,7 +45,7 @@ def setupGPIO():
 ## ----- Setup -----------------------------------------------------------------
 
 setupGPIO();
-#enablePreview();
+enablePreview();
 
 ## ----- Infinite loop ---------------------------------------------------------
 
