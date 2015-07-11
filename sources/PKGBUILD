@@ -1,0 +1,26 @@
+# Maintainer: Caspar Friedrich <c.s.w.friedrich@gmail.com>
+
+pkgname=photobooth
+pkgver=0.0.1
+pkgrel=1
+pkgdesc=
+arch=("armv6h")
+url=""
+license=("MIT")
+depends=("python" "python-pip")
+
+install=${pkgname}.install
+
+source=("https://vertigo.canopus.uberspace.de/packages/${pkgname}-${pkgver}.tar.xz")
+sha256sums=('1f7ef4657c9f9bee1bca3ca36b2c63c668e54b173a0702f490d1fb2b688ab862')
+
+build() {
+	true
+}
+
+package() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+
+	#install -D "${pkgname}/${pkgname}.service" "${pkgdir}/lib/systemd/system/"
+	install -D "${pkgname}" "${pkgdir}/opt/${pkgname}"
+}
