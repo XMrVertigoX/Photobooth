@@ -1,12 +1,9 @@
 [Unit]
-Description = photobooth
+Description = Photobooth
  
 [Service]
 WorkingDirectory = /opt/photobooth/src
-ExecStartPre= 
 ExecStart = /bin/python2 photobooth.py
-Restart = on-failure
-RestartSec = 15
 
 [Install]
-WantedBy = default.target
+WantedBy = multi-user.target

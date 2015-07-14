@@ -47,7 +47,6 @@ def enablePreview():
 
 def archivePicture():
 	safeTime = str(time.time())
-	shutil.copy('capt0000.jpg', 'backup/' + config['Misc']['imagePrefix'] + safeTime + '.jpg')
 	shutil.move('capt0000.jpg', config['Paths']['output'] + '/' + config['Misc']['imagePrefix'] + safeTime + '.jpg')
 
 ## ----- Setup -----------------------------------------------------------------
