@@ -7,12 +7,12 @@ pkgdesc=
 arch=("armv6h")
 url=""
 license=("MIT")
-depends=("python" "python-pip")
+depends=("base-devel" "lirc" "python" "python-pip" "gphoto2" "terminus-font")
 
 install=${pkgname}.install
 
 source=("https://vertigo.canopus.uberspace.de/packages/${pkgname}-${pkgver}.tar.xz")
-sha256sums=('b499eab34a5c5fa12b74a31606caa30dbfa8db2d354e28a1718df83cd20d7e22')
+sha256sums=('1bb666d9c574933770bc29dfef7bf953772775af9b2ce19c195b19a77e81250c')
 
 build() {
 	true
