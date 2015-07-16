@@ -1,0 +1,6 @@
+#! /bin/bash
+
+pacman -Syu --needed --noconfirm base-devel python2 python2-pip python2-pygame
+#pacman -Syu --needed --noconfirm rsync zsh grml-zsh-config
+
+pip2 picamera RPi.GPIO configparser

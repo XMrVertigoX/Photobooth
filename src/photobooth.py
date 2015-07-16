@@ -1,42 +1,61 @@
-#! /bin/python2
+import configparser, picamera, pygame, shutil, subprocess, time, os
 
-import configparser
-import picamera
-import pygame
-import RPi.GPIO as GPIO
-import shutil
-import subprocess
-import time, datetime
+# Local libraries
+import Button
+from pngview import PNGView
+from aspect_scale import aspect_scale
 
-import pngview
+global display, previewCamera
 
 config = configparser.ConfigParser()
 config.read('photobooth.ini')
 
-pygame.init()
-pygame.mouse.set_visible(0)
+button.init()
 
-screen = pygame.display.set_mode((1920, 1080))
+buttons = {
+	'green': button.Button(config['Buttons']['green']),
+	'red': button.Button(config['Buttons']['red'])
+}
 
-previewCamera = picamera.PiCamera()
-previewCamera.vflip = config['Misc']['previewFlip']
+pngImages = {
+	'foto': PNGView('images/foto.png)',
+	'smile': PNGView('images/smile.png'),
+	'timer_1': PNGView('images/timer_1.png'),
+	'timer_2': PNGView('images/timer_2.png'),
+	'timer_3': PNGView('images/timer_3.png'),
+	'wait': PNGView('images/wait.png)'
+}
+
+pygameImages = {
+	'ok': pygame.image.load("images/ok.png")
+}
+
+screenWidth = config['Display']['width']
+screenHeight = config['Display']['height']
+
+sleep = config['Misc']['countdownSleep']
 
 flags = {
 	'run': True,
 	'capture': False
 }
 
-global fotoButton
+captureName = 'capture.jpg'
+
 
 ## ----- Functions -------------------------------------------------------------
 
-def setupGPIO():
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(9, GPIO.IN)
-	GPIO.setup(10, GPIO.IN)
+def setupPygame():
+	pygame.init()
+	pygame.mouse.set_visible(0)
+	display = pygame.display.set_mode((screenWidth, screenHeight))
+
+def setupPreviewCamera():
+	previewCamera = picamera.PiCamera()
+	previewCamera.vflip = config['Misc']['previewFlip']
 
 def takeAPicture():
-	captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download'])
+	captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download', 'filename=' + captureName])
 	captureProcess.wait()
 
 def disablePreview():
@@ -45,18 +64,28 @@ def disablePreview():
 def enablePreview():
 	previewCamera.start_preview()
 
-def archivePicture():
+def savePhoto():
 	safeTime = str(time.time())
-	shutil.move('capt0000.jpg', config['Paths']['output'] + '/' + config['Misc']['imagePrefix'] + safeTime + '.jpg')
+	shutil.move(captureName, config['Paths']['output'] + '/' + config['Misc']['imagePrefix'] + safeTime + '.jpg')
+
+def waitUntil(condition):
+	while not condition:
+		pass
+
+def buttonPressed(gpio):
+	pass
 
 ## ----- Setup -----------------------------------------------------------------
 
-setupGPIO();
-enablePreview();
+setupPygame()
+setupPreviewCamera()
+
+enablePreview()
+
+pngImages['foto'].show()
+
 
 ## ----- Infinite loop ---------------------------------------------------------
-
-fotoButton = pngview.show("images/foto.png", 3)
 
 while flags['run']:
 	#flags['run'] = False
@@ -68,55 +97,43 @@ while flags['run']:
 	if flags['capture']:
 		flags['capture'] = False
 
-		p = pngview.show("images/timer_3.png", 3)
-		time.sleep(1.5)
-		p.terminate()
+		pngImages['timer_3'].show()
+		time.sleep(sleep)
+		pngImages['timer_3'].terminate()
 
-		p = pngview.show("images/timer_2.png", 3)
-		time.sleep(1.5)
-		p.terminate()
+		pngImages['timer_2'].show()
+		time.sleep(sleep)
+		pngImages['timer_2'].terminate()
 
-		p = pngview.show("images/timer_1.png", 3)
-		time.sleep(1.5)
-		p.terminate()
+		pngImages['timer_1'].show()
+		time.sleep(sleep)
+		pngImages['timer_1'].terminate()
 
-		p = pngview.show("images/smile.png", 3)
+		pngImages['smiles'].show()
 		
 		takeAPicture()
 
-		#captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download', '--filename=' + config['Paths']['output'] + '/' + str(time.time()) + '.jpg'])
-		#captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download'])
-		#captureProcess.wait()
+		pngImages['smiles'].terminate()
 
-		p.terminate()
-
-		p = pngview.show("images/wait.png", 3)
+		pngImages['wait'].show()
 
 		image = pygame.image.load("capt0000.jpg")
-		scaledImage = pygame.transform.scale(image, (1280, 1024))
+		scaledImage = pygame.transform.aspect_scale(image, (screenHeight, screenHeight))
 		screen.blit(scaledImage, (0, 0))
 
-		button = pygame.image.load("images/ok.png")
-		screen.blit(button, (0, 0))
-
-		disablePreview()
-
+		screen.blit(pygameImages['ok'], (0, 0))
 		pygame.display.update()
 
-		p.terminate()
+		disablePreview()
+		pngImages['wait'].terminate()
 
-		while GPIO.input(9):
-			pass
+		waitUntil(not GPIO.input(9))
 
-		archivePicture()
+		savePhoto()
 
 		screen.fill((0, 0, 0))
 		pygame.display.update()
 
 		enablePreview()
 
-		fotoButton = pngview.show("images/foto.png", 3)
-
-## ----- End program -----------------------------------------------------------
-
-previewCamera.close()
+		fotoButton = pngview.show("images/foto.png")

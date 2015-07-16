@@ -2,7 +2,7 @@
 Description = Photobooth
  
 [Service]
-WorkingDirectory = /opt/photobooth/src
+WorkingDirectory = /opt/Photobooth/src
 ExecStart = /bin/python2 photobooth.py
 
 [Install]
