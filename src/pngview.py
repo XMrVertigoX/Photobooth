@@ -9,10 +9,9 @@ class PNGView():
 		self.layer = layer
 		
 	def show(self):
-		self.process = subprocess.Popen(binary, "-l" + str(self.layer), str(self.path)])
-		
-		global running
-		running = True
+		self.process = subprocess.Popen(binary, "-l" + str(self.layer),
+			str(self.path)])
+		self.running = True
 
 	def terminate(self):
 		if running:
