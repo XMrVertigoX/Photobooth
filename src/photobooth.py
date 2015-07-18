@@ -121,7 +121,7 @@ while flags['run']:
 
 		pngImages['wait'].show()
 
-		image = pygame.image.load("capt0000.jpg")
+		image = pygame.image.load(captureName)
 		scaledImage = pygame.transform.aspect_scale(image, (screenHeight,
 		                                            screenHeight))
 		
