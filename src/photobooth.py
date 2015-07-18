@@ -1,7 +1,7 @@
 import configparser, picamera, pygame, shutil, subprocess, time
 
 # Local libraries
-import button, display, pngview
+import button, display, pngview, util
 
 config = configparser.ConfigParser()
 config.read('photobooth.ini')
@@ -142,7 +142,7 @@ while flags['run']:
         pngImages['wait'].show()
 
         image = pygame.image.load(captureName)
-        scaledImage = aspect_scale(image, (display.width, display.height))
+        scaledImage = util.aspectScale(image, (display.width, display.height))
         
         display.gameScreen.blit(scaledImage, (0, 0))
 
@@ -154,8 +154,6 @@ while flags['run']:
 
         while not buttons['green'].isPressed():
             pass
-
-        #waitUntil(buttons['green'].isPressed())
 
         savePhoto()
 
