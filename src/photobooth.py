@@ -118,7 +118,7 @@ while flags['run']:
         pngImages['wait'].show()
 
         image = pygame.image.load(captureName)
-        scaledImage = aspect_scale(image, (display.width, display.height))
+        scaledImage = pygame.transform.scale(image, (display.width, display.height))
         
         display.gameScreen.blit(scaledImage, (0, 0))
 
