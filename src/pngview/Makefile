@@ -1,6 +1,6 @@
 OBJS=pngview.o lib/backgroundLayer.o lib/imageLayer.o lib/loadpng.o lib/image.o lib/key.o
 
-BIN=../pngview
+BIN=pngview
 
 CFLAGS+=-Wall -g -O3 -Ilib $(shell libpng-config --cflags)
 LDFLAGS+=-L/opt/vc/lib/ -lbcm_host -lm $(shell libpng-config --ldflags)

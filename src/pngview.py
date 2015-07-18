@@ -9,19 +9,16 @@ class PNGView():
 		self.layer = layer
 		
 	def show(self):
-		self.process = subprocess.Popen(binary, "-l" + str(self.layer),
-			str(self.path)])
+		self.process = subprocess.Popen([self.binary, "-l" + str(self.layer),
+		                                self.path])
 		self.running = True
 
 	def terminate(self):
-		if running:
-			self.terminate()
+		if self.running:
+			self.process.terminate()
 
 	def setPath(self, path):
 		self.path = path
 
 	def setLayer(self, layer):
 		self.layer = layer
-
-if __name__ == '__main__':
-	pass

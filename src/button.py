@@ -9,14 +9,11 @@ def init(mode = GPIO.BCM):
 	isInit = True
 
 class Button:
-	def __init__(self, gpio, direction = GPIO.IN, pull_up_down = GPIO.PUD_DOWN):
+	def __init__(self, gpio, direction = GPIO.IN):
 		self.gpio = gpio
 		self.direction = direction
 
-		GPIO.setup(self.gpio, self.direction, pull_up_down)
+		GPIO.setup(self.gpio, self.direction)
 
 	def isPressed(self):
-		return GPIO.input(self.gpio)
-
-if __name__ == '__main__':
-	pass
+		return not GPIO.input(self.gpio)
