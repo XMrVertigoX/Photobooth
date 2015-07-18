@@ -2,7 +2,6 @@ import configparser, picamera, pygame, shutil, subprocess, time
 
 # Local libraries
 import button, display, pngview
-from aspect_scale import aspect_scale
 
 config = configparser.ConfigParser()
 config.read('photobooth.ini')
@@ -70,9 +69,37 @@ def savePhoto():
     shutil.move(captureName, config['Paths']['photos'] + '/' 
                 + config['Misc']['imagePrefix'] + safeTime + '.jpg')
 
-def waitUntil(condition):
-    while not condition:
-        pass
+def aspect_scale(img,(bx,by)):
+    ix,iy = img.get_size()
+    
+    if ix > iy:
+        # fit to width
+        scale_factor = bx/float(ix)
+        sy = scale_factor * iy
+        
+        if sy > by:
+            scale_factor = by/float(iy)
+            sx = scale_factor * ix
+            sy = by
+        
+        else:
+            sx = bx
+    
+    else:
+        # fit to height
+        scale_factor = by/float(iy)
+        sx = scale_factor * ix
+        
+        if sx > bx:
+            scale_factor = bx/float(ix)
+            sx = bx
+            sy = scale_factor * iy
+        
+        else:
+            sy = by
+
+    return pygame.transform.scale(img, (sx,sy))
+
 
 ## ----- Setup -----------------------------------------------------------------
 
@@ -115,7 +142,7 @@ while flags['run']:
         pngImages['wait'].show()
 
         image = pygame.image.load(captureName)
-        scaledImage = pygame.transform.scale(image, (display.width, display.height))
+        scaledImage = aspect_scale(image, (display.width, display.height))
         
         display.gameScreen.blit(scaledImage, (0, 0))
 
