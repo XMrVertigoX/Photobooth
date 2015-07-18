@@ -67,8 +67,8 @@ def enablePreview():
 
 def savePhoto():
     safeTime = str(time.time())
-    shutil.move(captureName, config['Paths']['output'] + '/'
-        + config['Misc']['imagePrefix'] + safeTime + '.jpg')
+    shutil.move(captureName, config['Paths']['photos'] + '/' 
+                + config['Misc']['imagePrefix'] + safeTime + '.jpg')
 
 def waitUntil(condition):
     while not condition:
