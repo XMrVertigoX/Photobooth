@@ -56,7 +56,7 @@ def setupPreviewCamera():
 
 def takeAPicture():
     captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download',
-                                      '--force-overwrite', 'filename=' + captureName])
+                                      '--force-overwrite', '--filename=' + captureName])
     captureProcess.wait()
 
 def disablePreview():
