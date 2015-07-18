@@ -3,3 +3,5 @@ class Display():
 		self.width = width
 		self.height = height
 		
+	def getSize(self):
+		return (self.width, self.height)

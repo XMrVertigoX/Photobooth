@@ -1,7 +1,8 @@
 import configparser, picamera, pygame, shutil, subprocess, time
 
 # Local libraries
-import button, display, pngview, util
+import button, display, pngview
+from util import aspectScale
 
 config = configparser.ConfigParser()
 config.read('photobooth.ini')
@@ -47,7 +48,7 @@ previewCamera.vflip = config['Misc']['previewFlip']
 def setupPygame():
     pygame.init()
     pygame.mouse.set_visible(0)
-    display.gameScreen = pygame.display.set_mode((display.width, display.height))
+    display.gameScreen = pygame.display.set_mode(display.getSize())
 
 def setupPreviewCamera():
     previewCamera = picamera.PiCamera()
@@ -110,7 +111,7 @@ while flags['run']:
         pngImages['wait'].show()
 
         image = pygame.image.load(captureName)
-        scaledImage = util.aspectScale(image, (display.width, display.height))
+        scaledImage = aspectScale(image, display.getSize())
         
         display.gameScreen.blit(scaledImage, (0, 0))
 
@@ -118,6 +119,7 @@ while flags['run']:
         pygame.display.update()
 
         disablePreview()
+
         pngImages['wait'].terminate()
 
         while not buttons['green'].isPressed():
