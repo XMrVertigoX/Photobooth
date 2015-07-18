@@ -74,9 +74,6 @@ def waitUntil(condition):
     while not condition:
         pass
 
-def buttonPressed(gpio):
-    pass
-
 ## ----- Setup -----------------------------------------------------------------
 
 setupPygame()
@@ -128,7 +125,10 @@ while flags['run']:
         disablePreview()
         pngImages['wait'].terminate()
 
-        waitUntil(buttons['green'].isPressed())
+        while not buttons['green'].isPressed():
+            pass
+
+        #waitUntil(buttons['green'].isPressed())
 
         savePhoto()
 
