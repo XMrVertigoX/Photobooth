@@ -48,7 +48,7 @@ previewCamera.vflip = config['Misc']['previewFlip']
 def setupPygame():
     pygame.init()
     pygame.mouse.set_visible(0)
-    pygame.display.set_mode((display.width, display.height))
+    display.gameScreen = pygame.display.set_mode((display.width, display.height))
 
 def setupPreviewCamera():
     previewCamera = picamera.PiCamera()
@@ -79,11 +79,7 @@ def buttonPressed(gpio):
 
 ## ----- Setup -----------------------------------------------------------------
 
-#button.init()
-
 setupPygame()
-#setupPreviewCamera()
-
 enablePreview()
 
 pngImages['foto'].show()
@@ -122,11 +118,11 @@ while flags['run']:
         pngImages['wait'].show()
 
         image = pygame.image.load(captureName)
-        scaledImage = pygame.transform.scale(image, (display.width, display.height))
+        scaledImage = pygame.transform.aspect_scale(image, (display.width, display.height))
         
-        screen.blit(scaledImage, (0, 0))
+        display.gameScreen.blit(scaledImage, (0, 0))
 
-        screen.blit(pygameImages['ok'], (0, 0))
+        display.gameScreen.blit(pygameImages['ok'], (0, 0))
         pygame.display.update()
 
         disablePreview()
@@ -136,7 +132,7 @@ while flags['run']:
 
         savePhoto()
 
-        screen.fill((0, 0, 0))
+        display.gameScreen.fill((0, 0, 0))
         pygame.display.update()
 
         enablePreview()
