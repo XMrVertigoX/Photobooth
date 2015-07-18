@@ -4,18 +4,50 @@ import configparser, picamera, pygame, shutil, subprocess, time
 import button, display, pngview
 from util import aspectScale
 
+
+## ----- Functions -------------------------------------------------------------
+
+def setupPygame():
+    pygame.init()
+    pygame.mouse.set_visible(0)
+    display.gameScreen = pygame.display.set_mode(display.getSize())
+
+def setupPreviewCamera():
+    previewCamera = picamera.PiCamera()
+    previewCamera.vflip = config['Misc']['previewFlip']
+
+def takeAPicture():
+    captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download',
+                                      '--force-overwrite', '--filename='
+                                      + captureName])
+    captureProcess.wait()
+
+def disablePreview():
+    previewCamera.stop_preview()
+
+def enablePreview():
+    previewCamera.start_preview()
+
+def savePhoto():
+    safeTime = str(time.time())
+    shutil.move(captureName, config['Paths']['photos'] + '/' 
+                + config['Misc']['imagePrefix'] + safeTime + '.jpg')
+
+
+## ----- Setup -----------------------------------------------------------------
+
 config = configparser.ConfigParser()
 config.read('photobooth.ini')
 
 button.init()
 
-display = display.Display(int(config['Display']['width']),
-                          int(config['Display']['height']))
-
 buttons = {
     'green': button.Button(int(config['Buttons']['green'])),
     'red': button.Button(int(config['Buttons']['red']))
 }
+
+display = display.Display(int(config['Display']['width']),
+                          int(config['Display']['height']))
 
 pngImages = {
     'foto': pngview.PNGView('images/foto.png'),
@@ -41,36 +73,6 @@ captureName = 'capture.jpg'
 
 previewCamera = picamera.PiCamera()
 previewCamera.vflip = config['Misc']['previewFlip']
-
-
-## ----- Functions -------------------------------------------------------------
-
-def setupPygame():
-    pygame.init()
-    pygame.mouse.set_visible(0)
-    display.gameScreen = pygame.display.set_mode(display.getSize())
-
-def setupPreviewCamera():
-    previewCamera = picamera.PiCamera()
-    previewCamera.vflip = config['Misc']['previewFlip']
-
-def takeAPicture():
-    captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download',
-                                      '--force-overwrite', '--filename=' + captureName])
-    captureProcess.wait()
-
-def disablePreview():
-    previewCamera.stop_preview()
-
-def enablePreview():
-    previewCamera.start_preview()
-
-def savePhoto():
-    safeTime = str(time.time())
-    shutil.move(captureName, config['Paths']['photos'] + '/' 
-                + config['Misc']['imagePrefix'] + safeTime + '.jpg')
-
-## ----- Setup -----------------------------------------------------------------
 
 setupPygame()
 enablePreview()
