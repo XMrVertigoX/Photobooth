@@ -122,7 +122,7 @@ while flags['run']:
         pngImages['wait'].show()
 
         image = pygame.image.load(captureName)
-        scaledImage = pygame.transform.scale(image, (screenHeight, screenHeight))
+        scaledImage = pygame.transform.scale(image, (display.width, display.height))
         
         screen.blit(scaledImage, (0, 0))
 
