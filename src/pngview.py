@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import Popen
 
 class PNGView():
     binary = 'pngview/pngview'
@@ -9,7 +9,7 @@ class PNGView():
         self.layer = layer
         
     def show(self):
-        self.process = subprocess.Popen([self.binary, "-l" + str(self.layer),
+        self.process = Popen([self.binary, "-l" + str(self.layer),
                                         self.path])
         self.running = True
 

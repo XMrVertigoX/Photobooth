@@ -1,4 +1,8 @@
-import configparser, picamera, pygame, shutil, subprocess, time
+import configparser, picamera, pygame, shutil, time
+
+from subprocess import Popen
+from multiprocessing import Process
+from PIL import Image
 
 # Local libraries
 import button, display, pngview
@@ -17,9 +21,11 @@ def setupPreviewCamera():
     previewCamera.vflip = config['Misc']['previewFlip']
 
 def takeAPicture():
-    captureProcess = subprocess.Popen(['gphoto2', '--capture-image-and-download',
-                                      '--force-overwrite', '--filename='
-                                      + captureName])
+    captureProcess = Popen(['gphoto2',
+                            '--capture-image-and-download',
+                            '--force-overwrite',
+                            '--filename=' + captureName +'.jpg'])
+    
     captureProcess.wait()
 
 def disablePreview():
@@ -30,7 +36,25 @@ def enablePreview():
 
 def savePhoto():
     safeTime = str(time.time())
-    shutil.move(captureName, config['Paths']['photos'] + '/' 
+
+    if config['Misc']['logo']:
+        logo = Image.open("images/logo.png")
+        logo = logo.convert("RGBA")
+
+        photo = Image.open(captureName + '.jpg')
+        photo = photo.convert('RGBA')
+
+        compositeImage = Image.alpha_composite(photo, logo)
+        compositeImage.save(captureName + '_logo.jpg')
+
+        shutil.copy(captureName + "_logo.jpg", config['Paths']['photos'] + '/' 
+                    + config['Misc']['imagePrefix'] + safeTime + '_logo.jpg')
+        shutil.move(captureName + "_logo.jpg", config['Paths']['backup'] + '/' 
+                    + config['Misc']['imagePrefix'] + safeTime + '_logo.jpg')
+
+    shutil.copy(captureName + ".jpg", config['Paths']['photos'] + '/' 
+                + config['Misc']['imagePrefix'] + safeTime + '.jpg')
+    shutil.move(captureName + ".jpg", config['Paths']['backup'] + '/' 
                 + config['Misc']['imagePrefix'] + safeTime + '.jpg')
 
 
@@ -69,18 +93,22 @@ flags = {
     'capture': False
 }
 
-captureName = 'capture.jpg'
+captureName = config['Misc']['captureName']
 
 previewCamera = picamera.PiCamera()
 previewCamera.vflip = config['Misc']['previewFlip']
 
 setupPygame()
+
+
+# ----- Prepare ----------------------------------------------------------------
+
 enablePreview()
 
 pngImages['foto'].show()
 
 
-## ----- Infinite loop ---------------------------------------------------------
+# ----- Infinite loop ----------------------------------------------------------
 
 while flags['run']:
     #flags['run'] = False
@@ -112,7 +140,7 @@ while flags['run']:
 
         pngImages['wait'].show()
 
-        image = pygame.image.load(captureName)
+        image = pygame.image.load(captureName + '.jpg')
         scaledImage = aspectScale(image, display.getSize())
         
         display.gameScreen.blit(scaledImage, (0, 0))
@@ -127,7 +155,8 @@ while flags['run']:
         while not buttons['green'].isPressed():
             pass
 
-        savePhoto()
+        p = Process(target=savePhoto)
+        p.start()
 
         display.gameScreen.fill((0, 0, 0))
         pygame.display.update()
@@ -135,3 +164,9 @@ while flags['run']:
         enablePreview()
 
         pngImages['foto'].show()
+
+
+# ----- Quit program -----------------------------------------------------------
+
+disablePreview()
+pngImages['foto'].terminate()
