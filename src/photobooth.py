@@ -1,5 +1,7 @@
-import configparser, picamera, pygame, shutil, time
+import pygame, shutil, time
 
+from picamera import PiCamera
+from configparser import ConfigParser
 from subprocess import Popen
 from multiprocessing import Process
 from PIL import Image
@@ -25,7 +27,7 @@ def takeAPicture():
                             '--capture-image-and-download',
                             '--force-overwrite',
                             '--filename=' + captureName +'.jpg'])
-    
+
     captureProcess.wait()
 
 def disablePreview():
@@ -60,7 +62,7 @@ def savePhoto():
 
 ## ----- Setup -----------------------------------------------------------------
 
-config = configparser.ConfigParser()
+config = ConfigParser()
 config.read('photobooth.ini')
 
 button.init()
@@ -152,11 +154,12 @@ while flags['run']:
 
         pngImages['wait'].terminate()
 
+        # Wait for green button
         while not buttons['green'].isPressed():
             pass
 
-        p = Process(target=savePhoto)
-        p.start()
+        saveProcess = Process(target=savePhoto)
+        saveProcess.start()
 
         display.gameScreen.fill((0, 0, 0))
         pygame.display.update()
