@@ -1,12 +1,10 @@
 import RPi.GPIO as GPIO
 
-isInit = False
-
 def init(mode = GPIO.BCM):
 	GPIO.setmode(mode)
 
-	global isInit
-	isInit = True
+def cleanup():
+	GPIO.cleanup()
 
 class Button:
 	def __init__(self, gpio, direction = GPIO.IN):

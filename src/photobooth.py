@@ -6,9 +6,12 @@ from subprocess import Popen
 from multiprocessing import Process
 from PIL import Image
 
-# Local libraries
-import button, display, pngview
+# Local modules
+import button
+
+from display import Display
 from util import aspectScale
+from pngview import PNGView
 
 
 ## ----- Functions -------------------------------------------------------------
@@ -72,16 +75,15 @@ buttons = {
     'red': button.Button(int(config['Buttons']['red']))
 }
 
-display = display.Display(int(config['Display']['width']),
-                          int(config['Display']['height']))
+display = Display(int(config['Display']['width']), int(config['Display']['height']))
 
 pngImages = {
-    'foto': pngview.PNGView('images/foto.png'),
-    'smile': pngview.PNGView('images/smile.png'),
-    'timer_1': pngview.PNGView('images/timer_1.png'),
-    'timer_2': pngview.PNGView('images/timer_2.png'),
-    'timer_3': pngview.PNGView('images/timer_3.png'),
-    'wait': pngview.PNGView('images/wait.png')
+    'foto': PNGView('images/foto.png'),
+    'smile': PNGView('images/smile.png'),
+    'timer_1': PNGView('images/timer_1.png'),
+    'timer_2': PNGView('images/timer_2.png'),
+    'timer_3': PNGView('images/timer_3.png'),
+    'wait': PNGView('images/wait.png')
 }
 
 pygameImages = {
@@ -91,8 +93,8 @@ pygameImages = {
 sleep = float(config['Misc']['countdownSleep'])
 
 flags = {
-    'run': True,
-    'capture': False
+    'capture': False,
+    'run': True
 }
 
 captureName = config['Misc']['captureName']
@@ -101,9 +103,6 @@ previewCamera = picamera.PiCamera()
 previewCamera.vflip = config['Misc']['previewFlip']
 
 setupPygame()
-
-
-# ----- Prepare ----------------------------------------------------------------
 
 enablePreview()
 
@@ -136,40 +135,83 @@ while flags['run']:
 
         pngImages['smile'].show()
         
-        takeAPicture()
+        # ---
 
-        pngImages['smile'].terminate()
+        try:
+            takeAPicture()
 
-        pngImages['wait'].show()
+            pngImages['smile'].terminate()
 
-        image = pygame.image.load(captureName + '.jpg')
-        scaledImage = aspectScale(image, display.getSize())
+            pngImages['wait'].show()
+
+            image = pygame.image.load(captureName + '.jpg')
+            scaledImage = aspectScale(image, display.getSize())
+            
+            display.gameScreen.blit(scaledImage, (0, 0))
+
+            display.gameScreen.blit(pygameImages['ok'], (0, 0))
+            pygame.display.update()
+
+            disablePreview()
+
+            pngImages['wait'].terminate()
+
+            # Wait for green button
+            while not buttons['green'].isPressed():
+                pass
+
+            saveProcess = Process(target=savePhoto, args=())
+            saveProcess.start()
+        else:
+            pngImages['wait'].kill()
+        finally:
+            display.gameScreen.fill((0, 0, 0))
+            pygame.display.update()
+
+            enablePreview()
+
+            pngImages['foto'].show()
+
+        # ---
+
+        # takeAPicture()
+
+        # pngImages['smile'].terminate()
+
+        # pngImages['wait'].show()
+
+        # image = pygame.image.load(captureName + '.jpg')
+        # scaledImage = aspectScale(image, display.getSize())
         
-        display.gameScreen.blit(scaledImage, (0, 0))
+        # display.gameScreen.blit(scaledImage, (0, 0))
 
-        display.gameScreen.blit(pygameImages['ok'], (0, 0))
-        pygame.display.update()
+        # display.gameScreen.blit(pygameImages['ok'], (0, 0))
+        # pygame.display.update()
 
-        disablePreview()
+        # disablePreview()
 
-        pngImages['wait'].terminate()
+        # pngImages['wait'].terminate()
 
-        # Wait for green button
-        while not buttons['green'].isPressed():
-            pass
+        # # Wait for green button
+        # while not buttons['green'].isPressed():
+        #     pass
 
-        saveProcess = Process(target=savePhoto)
-        saveProcess.start()
+        # saveProcess = Process(target=savePhoto)
+        # saveProcess.start()
 
-        display.gameScreen.fill((0, 0, 0))
-        pygame.display.update()
+        # display.gameScreen.fill((0, 0, 0))
+        # pygame.display.update()
 
-        enablePreview()
+        # enablePreview()
 
-        pngImages['foto'].show()
+        # pngImages['foto'].show()
 
 
 # ----- Quit program -----------------------------------------------------------
 
-disablePreview()
-pngImages['foto'].terminate()
+for image in pngImages:
+    image.kill()
+
+previewCamera.close()
+
+button.cleanup()

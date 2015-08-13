@@ -9,10 +9,19 @@ class PNGView():
         self.layer = layer
         
     def show(self):
-        self.process = Popen([self.binary, "-l" + str(self.layer),
-                                        self.path])
+        if not self.running:
+            self.process = Popen([self.binary, "-l" + str(self.layer), self.path])
+        
         self.running = True
 
     def terminate(self):
         if self.running:
             self.process.terminate()
+
+        self.running = False
+
+    def kill(self):
+        if self.running:
+            self.process.kill()
+
+        self.running = False
