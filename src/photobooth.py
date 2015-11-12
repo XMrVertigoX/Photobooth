@@ -31,7 +31,6 @@ def takeAPicture():
                             '--capture-image-and-download',
                             '--force-overwrite',
                             '--filename=' + captureName +'.jpg'])
-
     captureProcess.wait()
 
 def disablePreview():
@@ -45,7 +44,7 @@ def savePhoto():
 
     tempLocation = '/tmp/'
     tempFile = tempLocation + safeTime + captureFormat
-    
+
     shutil.move(captureName + captureFormat, tempFile)
 
     backupDirectory = config['Paths']['backup'] + '/'
@@ -156,7 +155,7 @@ while flags['run']:
         pngImages['timer_1'].terminate()
 
         pngImages['smile'].show()
-       
+
         takeAPicture()
 
         pngImages['smile'].terminate()
@@ -166,7 +165,7 @@ while flags['run']:
         if os.path.exists(captureName + '.jpg'):
             image = pygame.image.load(captureName + '.jpg')
             scaledImage = aspectScale(image, display.getSize())
-            
+
             display.gameScreen.blit(scaledImage, (0, 0))
 
             display.gameScreen.blit(pygameImages['ok'], (0, 0))
@@ -187,7 +186,7 @@ while flags['run']:
         else:
             if os.path.exists(captureName + '.jpg'):
                 os.remove(captureName + '.jpg')
-            
+
             if os.path.exists(captureName + '_logo.jpg'):
                 os.remove(captureName + '_logo.jpg')
 
