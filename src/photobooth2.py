@@ -43,7 +43,14 @@ class Photobooth():
 def main():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
     logging.debug("Entering main function")
-    photobooth = Photobooth('photobooth2.ini')
+    photobooth = Photobooth('photobooth.ini')
+    try:
+        while True: pass
+    except KeyboardInterrupt:
+        for image in pngImages:
+            image.kill()
+        previewCamera.close()
+        button.cleanup()
 
 if __name__ == '__main__':
     main()
