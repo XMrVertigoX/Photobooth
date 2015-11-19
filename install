@@ -1,7 +1,7 @@
 #! /bin/bash
 
 pacman -Sy --needed --noconfirm base-devel python2 python2-pip python2-pygame \
-	git dosfstools gphoto2 rsync zsh grml-zsh-config samba
+		git dosfstools gphoto2 rsync zsh grml-zsh-config samba
 
 pip2 install picamera RPi.GPIO configparser pillow
 
