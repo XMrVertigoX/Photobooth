@@ -1,7 +1,7 @@
-import logging, shutil
+import logging, time
 from multiprocessing import Process
-from subprocess import run
-# TODO import tkinter
+from subprocess import Popen
+# import tkinter
 
 # Additional modules
 from picamera import PiCamera
@@ -18,34 +18,46 @@ from configparser import ConfigParser
 # from pngview import PNGView
 
 class Photobooth():
-    def __init__(self, configFile):
+    def __init__(self, config):
         logging.debug("__init__")
-        self.__config = ConfigParser()
-        self.__config.read(configFile)
-        __setupPreviewCamera()
 
-    def __setupPreviewCamera(self):
-        logging.debug("__setupPreviewCamera")
+    def setupPreviewCamera(self):
+        logging.debug("setupPreviewCamera")
         self.__previewCamera = PiCamera()
         self.__previewCamera.vflip = self.__config['preview']['vflip']
 
     def stopPreview(self):
-        self.__previewCamera.stop_preview()
+        logging.debug("stopPreview")
+        if self.__previewCamera:
+            self.__previewCamera.stop_preview()
+        else:
+            logging.warning("No preview camera set!")
 
     def startPreview(self):
-        self.__previewCamera.start_preview()
+        logging.debug("startPreview")
+        if self.__previewCamera:
+            self.__previewCamera.start_preview()
+        else:
+            logging.warning("No preview camera set!")
 
     def capturePhoto(self):
-        logging.debug("capture")
+        logging.debug("capturePhoto")
         run(['gphoto2', '--capture-image-and-download', '--force-overwrite',
                 '--filename={0}.jpg'.format(self.__config['capture']['fileName'])])
 
+    def savePhoto(self):
+        pass
+
 def main():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
-    logging.debug("Entering main function")
-    photobooth = Photobooth('photobooth.ini')
+    logging.debug("Entering main routine")
+    config = ConfigParser().read('photobooth.ini')
+    # config.read(configFile) TODO
+    photobooth = Photobooth(config)
+    setupPreviewCamera()
     try:
-        while True: pass
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
         for image in pngImages:
             image.kill()

@@ -26,19 +26,6 @@ def setupPreviewCamera():
     previewCamera = picamera.PiCamera()
     previewCamera.vflip = config['Misc']['previewFlip']
 
-def takeAPicture():
-    captureProcess = Popen(['gphoto2',
-                            '--capture-image-and-download',
-                            '--force-overwrite',
-                            '--filename=' + captureName +'.jpg'])
-    captureProcess.wait()
-
-def disablePreview():
-    previewCamera.stop_preview()
-
-def enablePreview():
-    previewCamera.start_preview()
-
 def savePhoto():
     safeTime = str(time.time())
 
