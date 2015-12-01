@@ -185,13 +185,3 @@ while flags['run']:
         enablePreview()
 
         pngImages['foto'].show()
-
-
-# ----- Quit program -----------------------------------------------------------
-
-for image in pngImages:
-    image.kill()
-
-previewCamera.close()
-
-button.cleanup()
