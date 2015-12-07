@@ -4,7 +4,7 @@ class PNGView():
     binary = 'pngview/pngview'
     running = False
 
-    def __init__(self, path, layer = 3):
+    def __init__(self, path, layer=3):
         self.path = path
         self.layer = layer
 

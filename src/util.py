@@ -2,8 +2,7 @@ import pygame
 
 def aspectScale(img, (bx, by)):
     ix, iy = img.get_size()
-    if ix > iy:
-        # fit to width
+    if ix > iy: # fit to width
         scale_factor = bx/float(ix)
         sy = scale_factor * iy
         if sy > by:
@@ -12,8 +11,7 @@ def aspectScale(img, (bx, by)):
             sy = by
         else:
             sx = bx
-    else:
-        # fit to height
+    else: # fit to height
         scale_factor = by/float(iy)
         sx = scale_factor * ix
         if sx > bx:
