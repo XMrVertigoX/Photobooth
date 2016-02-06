@@ -1,4 +1,5 @@
-import logging, sys
+import logging
+import sys
 from argparse import ArgumentParser
 from configparser import ConfigParser
 
@@ -6,13 +7,16 @@ import buttons
 from buttons import Button
 from photobooth2 import Photobooth
 
+
 def parseArguments():
     parser = ArgumentParser()
     parser.add_argument('-c', '--config', default='photobooth.ini')
     return vars(parser.parse_args())
 
+
 def setup():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
+
 
 def main():
     arguments = parseArguments()

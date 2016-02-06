@@ -1,4 +1,5 @@
-import logging, sys
+import logging
+import sys
 
 from multiprocessing import Process
 from subprocess import run
@@ -13,6 +14,7 @@ from picamera import PiCamera
 # from file import File
 # from util import aspectScale
 # from pngview import PNGView
+
 
 class Photobooth():
     filename = 'capture.jpg'
@@ -37,4 +39,4 @@ class Photobooth():
     def capturePhoto(self):
         logging.debug("capturePhoto")
         run(['gphoto2', '--capture-image-and-download', '--force-overwrite',
-                '--filename={0}'.format(filename)])
+             '--filename={0}'.format(filename)])

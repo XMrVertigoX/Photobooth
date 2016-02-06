@@ -1,5 +1,6 @@
 from subprocess import Popen
 
+
 class PNGView():
     binary = 'pngview/pngview'
     running = False
@@ -10,7 +11,8 @@ class PNGView():
 
     def show(self):
         if not self.running:
-            self.process = Popen([self.binary, "-l" + str(self.layer), self.path])
+            self.process = Popen(
+                [self.binary, "-l" + str(self.layer), self.path])
         self.running = True
 
     def terminate(self):
